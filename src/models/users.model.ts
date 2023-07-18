@@ -1,57 +1,63 @@
-import { Document, Model, model, Schema, Query } from "mongoose";
+import { Model, model, Schema } from "mongoose";
+import { IUser, IUserModel } from "../interfaces";
 
-const userSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
+export const userSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+      unique: false,
+    },
+    role: {
+      type: String,
+      required: true,
+      enum: ["student", "moderator", "admin", "superadmin"],
+      default: "student",
+    },
+    batch: {
+      type: String,
+      required: true,
+      default: null,
+    },
+    isVerified: {
+      type: Boolean,
+      default: true,
+    },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  phone: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  role: {
-    type: String,
-    required: true,
-    enum: ["student", "moderator", "admin", "superadmin"],
-    default: "student",
-  },
-  batch: {
-    type: String,
-    required: true,
-    default: null,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
-// export interface IUser extends Document {
-//   name: string;
-//   email: string;
-//   password: string;
-//   phone: string;
-//   role: string;
-//   batch: string;
-// }
+userSchema.statics.findByEmail = function (
+  this: Model<IUserModel>,
+  email: string
+) {
+  return this.findOne({ email });
+};
 
-// export interface IUserModel extends Model<IUser> {
-//   findByEmail(email: string): Query<IUser | null, IUser>;
-// }
-
-// userSchema.statics.findByEmail = function (email: string) {
-//   return this.findOne({ email });
-// };
-
-// export default model<IUser, IUserModel>("User", userSchema);
-
-const User = model("User", userSchema);
+const User = model<IUser, IUserModel>("User", userSchema);
 
 export default User;

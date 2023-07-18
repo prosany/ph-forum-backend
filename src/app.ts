@@ -6,6 +6,7 @@ import morgan from "morgan";
 // Custom import
 import { PORT } from "./config";
 import dbConnection from "./config/database.config";
+import userRoutes from "./routes/user.routes";
 
 // Initialize the application
 const app: Application = express();
@@ -28,11 +29,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 // Routes middleware
-// app.use("/api");
+app.use("/api", userRoutes);
 
 // Error handeler
 app.use(async (req: Request, res: Response, next: NextFunction) => {
-  next(createError.NotFound());
+  next(createError.NotFound("This route does not exist"));
 });
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
