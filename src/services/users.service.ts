@@ -1,6 +1,7 @@
 import { IUser } from "../interfaces";
 import User from "../models/users.model";
 import { comparePassword, hashPassword } from "../utils/encrypt";
+import { signToken } from "../utils/jwt";
 import { userError } from "../utils/user";
 
 export const getUserByEmail = async (email: string): Promise<IUser | null> => {
@@ -66,6 +67,7 @@ export const verifyUserLogin = async (
     if (!isPassMatched) {
       return userError(401, "Invalid login credentials. Try again.");
     }
+    const token = await signToken(user?.email);
     return {
       status: 1,
       message: "Congratulations! You have successfully logged in.",
@@ -74,6 +76,7 @@ export const verifyUserLogin = async (
         email: user.email,
         role: user.role,
         batch: user.batch,
+        token,
       },
     };
   } catch (error: any) {

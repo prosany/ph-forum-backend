@@ -4,7 +4,7 @@ import createError from "http-errors";
 import { JWT_SECRET } from "../config";
 
 interface DecodedToken {
-  user_id: string;
+  user_email: string;
   iat: number;
   exp: number;
   iss: string;
@@ -12,18 +12,18 @@ interface DecodedToken {
 }
 
 interface RequestWithUser extends Request {
-  user_id: string;
+  user_email: string;
 }
 
-const signToken = (user_id: string): Promise<string> => {
+const signToken = (user_email: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const signOptions: SignOptions = {
       expiresIn: "7d",
       issuer: "Programming-Hero.Com",
-      audience: user_id,
+      audience: user_email,
     };
 
-    JWT.sign({ user_id }, JWT_SECRET, signOptions, (err, token) => {
+    JWT.sign({ user_email }, JWT_SECRET, signOptions, (err, token) => {
       if (err) return reject(createError.InternalServerError());
       resolve(token as string);
     });
@@ -49,7 +49,7 @@ const verifyToken = (
     if (err) return next(createError(401, "Invalid token"));
 
     const decodedToken = decoded as DecodedToken;
-    req.user_id = decodedToken.aud;
+    req.user_email = decodedToken.aud;
     next();
   });
 };
