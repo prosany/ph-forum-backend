@@ -1,4 +1,4 @@
-import { IUser } from "../interfaces";
+import { IUser } from "../types";
 import User from "../models/users.model";
 import { comparePassword, hashPassword } from "../utils/encrypt";
 import { signToken } from "../utils/jwt";
