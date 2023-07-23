@@ -1,18 +1,6 @@
 import { Schema, model } from "mongoose";
 import { IPost } from "../types";
 
-export const photosVideosSchema = new Schema({
-  type: {
-    type: String,
-    enum: ["image", "video"],
-    required: true,
-  },
-  url: {
-    type: String,
-    required: true,
-  },
-});
-
 export const postSchema = new Schema(
   {
     user: {
@@ -46,11 +34,17 @@ export const postSchema = new Schema(
         "Rejected",
         "Closed",
       ],
+      default: "New",
     },
     upVotes: {
       type: [String],
       required: false,
       default: [],
+    },
+    upVotesCount: {
+      type: Number,
+      required: true,
+      default: 0,
     },
     priority: {
       type: String,
@@ -86,8 +80,8 @@ export const postSchema = new Schema(
     editedBy: {
       type: String,
       required: false,
-      enum: ["user", "admin"],
-      default: null,
+      enum: ["user", "admin", "N/A"],
+      default: "N/A",
     },
     editedHistory: {
       type: [String],
@@ -95,7 +89,7 @@ export const postSchema = new Schema(
       default: [],
     },
     photosOrVideos: {
-      type: [photosVideosSchema],
+      type: [Object],
       required: false,
       default: [],
     },

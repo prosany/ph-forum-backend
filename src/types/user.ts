@@ -1,6 +1,7 @@
 import { Document, Model, ObjectId, Query } from "mongoose";
 
 export interface IUser extends Document {
+  uid: string;
   name: string;
   email: string;
   password: string;

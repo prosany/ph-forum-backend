@@ -5,6 +5,7 @@ import { JWT_SECRET } from "../config";
 
 interface DecodedToken {
   user_email: string;
+  user_uid: string;
   iat: number;
   exp: number;
   iss: string;
@@ -12,10 +13,13 @@ interface DecodedToken {
 }
 
 interface RequestWithUser extends Request {
-  user_email: string;
+  user?: {
+    user_email: string;
+    user_uid: string;
+  };
 }
 
-const signToken = (user_email: string): Promise<string> => {
+const signToken = (user_email: string, user_uid: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const signOptions: SignOptions = {
       expiresIn: "7d",
@@ -23,10 +27,15 @@ const signToken = (user_email: string): Promise<string> => {
       audience: user_email,
     };
 
-    JWT.sign({ user_email }, JWT_SECRET, signOptions, (err, token) => {
-      if (err) return reject(createError.InternalServerError());
-      resolve(token as string);
-    });
+    JWT.sign(
+      { user_email, user_uid },
+      JWT_SECRET,
+      signOptions,
+      (err, token) => {
+        if (err) return reject(createError.InternalServerError());
+        resolve(token as string);
+      }
+    );
   });
 };
 
@@ -49,7 +58,10 @@ const verifyToken = (
     if (err) return next(createError(401, "Invalid token"));
 
     const decodedToken = decoded as DecodedToken;
-    req.user_email = decodedToken.aud;
+    req.user = {
+      user_email: decodedToken.user_email,
+      user_uid: decodedToken.user_uid,
+    };
     next();
   });
 };

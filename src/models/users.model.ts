@@ -1,8 +1,15 @@
 import { Model, model, Schema } from "mongoose";
+import { v4 as uuidv4 } from "uuid";
+
 import { IUser, IUserModel } from "../types";
 
 export const userSchema = new Schema(
   {
+    uid: {
+      type: String,
+      required: true,
+      default: uuidv4(),
+    },
     name: {
       type: String,
       required: true,

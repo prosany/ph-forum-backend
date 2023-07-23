@@ -7,9 +7,16 @@ import morgan from "morgan";
 import { PORT } from "./config";
 import dbConnection from "./config/database.config";
 import userRoutes from "./routes/user.routes";
+import postRoutes from "./routes/post.routes";
 
 // Initialize the application
-const app: Application = express();
+const app = express();
+// Middleware
+app.use(cors({}));
+app.use(morgan("dev"));
+app.use(compress({}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Database connection
 (async () => {
@@ -19,17 +26,13 @@ const app: Application = express();
     console.error("Error connecting to the database:", error);
   }
 })();
-
-// Middleware
-app.use(cors({}));
-app.use(morgan("dev"));
-app.use(compress());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
+app.post("/api/upload", (req, res) => {
+  console.log(req.body);
+});
 
 // Routes middleware
 app.use("/api", userRoutes);
+app.use("/api", postRoutes);
 
 // Error handeler
 app.use(async (req: Request, res: Response, next: NextFunction) => {

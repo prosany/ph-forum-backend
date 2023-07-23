@@ -67,7 +67,7 @@ export const verifyUserLogin = async (
     if (!isPassMatched) {
       return userError(401, "Invalid login credentials. Try again.");
     }
-    const token = await signToken(user?.email);
+    const token = await signToken(user?.email, user?.uid);
     return {
       status: 1,
       message: "Congratulations! You have successfully logged in.",
