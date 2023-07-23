@@ -40,6 +40,11 @@ export const userSchema = new Schema(
       required: true,
       default: null,
     },
+    picture: {
+      type: String,
+      required: false,
+      default: "",
+    },
     isVerified: {
       type: Boolean,
       default: true,

@@ -46,10 +46,11 @@ export const getPosts = async (
   next: NextFunction
 ) => {
   try {
-    const posts = await getAllPost();
+    const { email } = req.query;
+    const posts = await getAllPost(email as string);
     res.send({
       status: 1,
-      message: "Post",
+      message: "Successfully retrieved posts",
       result: posts,
     });
   } catch (error) {

@@ -1,4 +1,5 @@
 import Post from "../models/post.model";
+import { getUserByEmail } from "./users.service";
 
 export const createSinglePost = async (postData: any): Promise<any> => {
   try {
@@ -12,8 +13,15 @@ export const createSinglePost = async (postData: any): Promise<any> => {
   }
 };
 
-export const getAllPost = async () => {
-  const posts = await Post.find({})
+export const getAllPost = async (email?: string) => {
+  let options: any = {};
+  if (email) {
+    const user: any = await getUserByEmail(email as string);
+    if (user) {
+      options = { user: user._id };
+    }
+  }
+  const posts = await Post.find(options)
     .select("-__v")
     .populate("user")
     .sort({ createdAt: -1 });

@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { signinValidation, signupValidation } from "../schemas/user.schemas";
-import { createUser, verifyUserLogin } from "../services/users.service";
+import {
+  createUser,
+  userStatistics,
+  verifyUserLogin,
+} from "../services/users.service";
 
 export const registration = async (
   req: Request,
@@ -34,6 +38,33 @@ export const login = async (
     }
     res.status(200);
     res.send(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const statistics = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email } = req.query;
+    const statis = await userStatistics(email as string);
+    if (statis.length > 0) {
+      res.status(200);
+      res.send({
+        status: 1,
+        message: "User Statistics were successfully retrieved.",
+        result: statis,
+      });
+    } else {
+      res.status(200);
+      res.send({
+        status: 0,
+        message: "No statistics found.",
+      });
+    }
   } catch (error) {
     next(error);
   }

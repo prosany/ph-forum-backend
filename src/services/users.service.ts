@@ -3,6 +3,7 @@ import User from "../models/users.model";
 import { comparePassword, hashPassword } from "../utils/encrypt";
 import { signToken } from "../utils/jwt";
 import { userError } from "../utils/user";
+import Post from "../models/post.model";
 
 export const getUserByEmail = async (email: string): Promise<IUser | null> => {
   const user = await User.findByEmail(email);
@@ -82,4 +83,58 @@ export const verifyUserLogin = async (
   } catch (error: any) {
     return userError(500, error.message || "Internal Server Error.");
   }
+};
+
+export const userStatistics = async (email: string) => {
+  return await Post.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "userDetails",
+      },
+    },
+    {
+      $unwind: "$userDetails",
+    },
+    {
+      $match: {
+        "userDetails.email": email,
+      },
+    },
+    {
+      $group: {
+        _id: "$userDetails.email",
+        totalPosts: {
+          $sum: 1,
+        },
+        resolvedCount: {
+          $sum: {
+            $cond: ["$isResolved", 1, 0],
+          },
+        },
+        unresolvedCount: {
+          $sum: {
+            $cond: ["$isUnresolved", 1, 0],
+          },
+        },
+        rejectedCount: {
+          $sum: {
+            $cond: ["$isRejected", 1, 0],
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        userEmail: "$_id",
+        _id: 0,
+        totalPosts: 1,
+        resolvedCount: 1,
+        unresolvedCount: 1,
+        rejectedCount: 1,
+      },
+    },
+  ]);
 };
