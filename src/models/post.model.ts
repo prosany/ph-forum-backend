@@ -93,6 +93,21 @@ export const postSchema = new Schema(
       required: false,
       default: [],
     },
+    isCommentOff: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    isCommentOffByAdmin: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    comments: {
+      type: [Object],
+      required: false,
+      default: [],
+    },
   },
   {
     timestamps: true,

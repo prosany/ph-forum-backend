@@ -78,6 +78,7 @@ export const verifyUserLogin = async (
         role: user.role,
         batch: user.batch,
         token,
+        picture: user.picture,
       },
     };
   } catch (error: any) {

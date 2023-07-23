@@ -1,7 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import JWT, { SignOptions, VerifyOptions } from "jsonwebtoken";
 import createError from "http-errors";
 import { JWT_SECRET } from "../config";
+import { RequestWithUser } from "../types";
 
 interface DecodedToken {
   user_email: string;
@@ -10,13 +11,6 @@ interface DecodedToken {
   exp: number;
   iss: string;
   aud: string;
-}
-
-interface RequestWithUser extends Request {
-  user?: {
-    user_email: string;
-    user_uid: string;
-  };
 }
 
 const signToken = (user_email: string, user_uid: string): Promise<string> => {

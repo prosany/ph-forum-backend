@@ -2,7 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import { createPostValidation } from "../schemas/post.schemas";
 import { getUserByEmail } from "../services/users.service";
 import { sepereateByComma } from "../utils/general";
-import { createSinglePost, getAllPost } from "../services/post.service";
+import {
+  createSinglePost,
+  getAllPost,
+  updatePostActivity,
+} from "../services/post.service";
+import { RequestWithUser } from "../types";
 
 interface IRequest extends Request {
   user?: {
@@ -53,6 +58,27 @@ export const getPosts = async (
       message: "Successfully retrieved posts",
       result: posts,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateActivity = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { postId } = req.params;
+    const posts = await updatePostActivity(postId, req.body, req.user);
+    if (posts) {
+      return res.send({
+        status: 1,
+        message: "Successfully updated the post",
+      });
+    } else {
+      next({ status: 500, message: "Something went wrong" });
+    }
   } catch (error) {
     next(error);
   }
