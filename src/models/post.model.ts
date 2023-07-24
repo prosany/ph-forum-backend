@@ -108,6 +108,16 @@ export const postSchema = new Schema(
       required: false,
       default: [],
     },
+    isPostedByAdmin: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    commentsFromAdmin: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   {
     timestamps: true,

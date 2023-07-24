@@ -5,6 +5,8 @@ import { sepereateByComma } from "../utils/general";
 import {
   createSinglePost,
   getAllPost,
+  getTrendingIssues,
+  storeComments,
   updatePostActivity,
 } from "../services/post.service";
 import { RequestWithUser } from "../types";
@@ -51,8 +53,7 @@ export const getPosts = async (
   next: NextFunction
 ) => {
   try {
-    const { email } = req.query;
-    const posts = await getAllPost(email as string);
+    const posts = await getAllPost({ ...req.query });
     res.send({
       status: 1,
       message: "Successfully retrieved posts",
@@ -75,6 +76,48 @@ export const updateActivity = async (
       return res.send({
         status: 1,
         message: "Successfully updated the post",
+      });
+    } else {
+      next({ status: 500, message: "Something went wrong" });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createComment = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { postId } = req.params;
+    const posts = await storeComments(postId, req.body, req.user);
+    if (posts) {
+      return res.send({
+        status: 1,
+        message: "Successfully added the comment",
+      });
+    } else {
+      next({ status: 500, message: "Something went wrong" });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const trendingIssue = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const trendingIssues = await getTrendingIssues();
+    if (trendingIssues) {
+      return res.send({
+        status: 1,
+        message: "Successfully retrieved trending issues",
+        result: trendingIssues,
       });
     } else {
       next({ status: 500, message: "Something went wrong" });

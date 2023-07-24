@@ -5,6 +5,8 @@ import {
   userStatistics,
   verifyUserLogin,
 } from "../services/users.service";
+import { RequestWithUser } from "../types";
+import User from "../models/users.model";
 
 export const registration = async (
   req: Request,
@@ -64,6 +66,42 @@ export const statistics = async (
         status: 0,
         message: "No statistics found.",
       });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateProfile = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { user_email } = req.user as any;
+    const { picture } = req.body;
+    const updatedUser = await User.updateOne(
+      {
+        email: user_email,
+      },
+      {
+        picture: picture,
+      }
+    );
+    if (updatedUser.modifiedCount > 0) {
+      res.status(200);
+      res.send({
+        status: 1,
+        message: "User profile was successfully updated.",
+      });
+      return;
+    } else {
+      res.status(200);
+      res.send({
+        status: 0,
+        message: "User profile was not updated.",
+      });
+      return;
     }
   } catch (error) {
     next(error);

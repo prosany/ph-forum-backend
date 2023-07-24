@@ -122,7 +122,13 @@ export const userStatistics = async (email: string) => {
         },
         rejectedCount: {
           $sum: {
-            $cond: ["$isRejected", 1, 0],
+            $cond: [
+              {
+                $or: ["$isRejected", { $eq: ["$status", "Closed"] }],
+              },
+              1,
+              0,
+            ],
           },
         },
       },
