@@ -10,6 +10,7 @@ import {
   updatePostActivity,
 } from "../services/post.service";
 import { RequestWithUser } from "../types";
+import Post from "../models/post.model";
 
 interface IRequest extends Request {
   user?: {
@@ -118,6 +119,34 @@ export const trendingIssue = async (
         status: 1,
         message: "Successfully retrieved trending issues",
         result: trendingIssues,
+      });
+    } else {
+      next({ status: 500, message: "Something went wrong" });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updatePost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { postId } = req.params;
+    const updated = await Post.updateOne(
+      {
+        _id: postId,
+      },
+      {
+        ...req.body,
+      }
+    );
+    if (updated.matchedCount > 0) {
+      return res.send({
+        status: 1,
+        message: "Successfully updated the post",
       });
     } else {
       next({ status: 500, message: "Something went wrong" });
