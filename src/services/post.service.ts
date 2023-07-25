@@ -76,10 +76,10 @@ export const getAllPost = async ({
     },
     {
       $sort: {
+        upVotesCount: -1,
         isRecent: -1,
         priority: -1,
         createdAt: -1,
-        upVotesCount: -1,
         commentsCount: -1,
       },
     },
